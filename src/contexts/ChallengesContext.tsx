@@ -1,12 +1,13 @@
-import { createContext, useState, ReactNode, useEffect } from 'react';
-import challenges from '../../challenges.json';
+import { createContext, useState, ReactNode, useEffect } from "react";
+import Cookies from "js-cookie";
+import challenges from "../../challenges.json";
 
 interface ChallengesProviderProps {
   children: ReactNode;
 }
 
 interface challengeData {
-  type: 'body' | 'eye';
+  type: "body" | "eye";
   description: string;
   amount: number;
 }
@@ -17,8 +18,8 @@ interface ChallengesContextData {
   challengesCompleted: number;
   levelUp: () => void;
   startNewChallenge: () => void;
-  resetChallenge:() => void;
-  completeChallenge:() => void;
+  resetChallenge: () => void;
+  completeChallenge: () => void;
   activeChallenge: challengeData;
   experienceToNextLevel: number;
 }
@@ -31,9 +32,8 @@ export function ChallengesProvider({ children }: ChallengesProviderProps) {
   const [challengesCompleted, setChallengesCompleted] = useState(0);
   const [activeChallenge, setActiveChallenge] = useState(null);
 
-
   function levelUp() {
-    setLevel(level +1);
+    setLevel(level + 1);
   }
 
   const experienceToNextLevel = Math.pow((level + 1) * 4, 2);
@@ -42,27 +42,33 @@ export function ChallengesProvider({ children }: ChallengesProviderProps) {
     Notification.requestPermission();
   }, []);
 
-  function startNewChallenge(){
+  useEffect(() => {
+    Cookies.set("level", String(level));
+    Cookies.set("currentExperience", String(currentExperience));
+    Cookies.set("completedChallenge", String(completeChallenge));
+  }, [level, completeChallenge, currentExperience]);
+
+  function startNewChallenge() {
     const randomChallengeIndex = Math.floor(Math.random() * challenges.length);
     const challenge = challenges[randomChallengeIndex];
 
     setActiveChallenge(challenge);
 
-    new Audio('/notification.mp3').play();
+    new Audio("/notification.mp3").play();
 
-    if(Notification.permission === 'granted'){
-      new Notification('Novo Desafio', {
-        body: `Valendo ${challenge.amount} xp`
+    if (Notification.permission === "granted") {
+      new Notification("Novo Desafio", {
+        body: `Valendo ${challenge.amount} xp`,
       });
     }
   }
 
   function resetChallenge() {
-    setActiveChallenge(null)
+    setActiveChallenge(null);
   }
 
   function completeChallenge() {
-    if(!activeChallenge){
+    if (!activeChallenge) {
       return;
     }
 
@@ -70,7 +76,7 @@ export function ChallengesProvider({ children }: ChallengesProviderProps) {
 
     let finalExperience = currentExperience + amount;
 
-    if(finalExperience >= experienceToNextLevel){
+    if (finalExperience >= experienceToNextLevel) {
       finalExperience = finalExperience - experienceToNextLevel;
       levelUp();
     }
@@ -82,17 +88,19 @@ export function ChallengesProvider({ children }: ChallengesProviderProps) {
   }
 
   return (
-    <ChallengesContext.Provider value={{ 
-      level, 
-      levelUp, 
-      currentExperience, 
-      challengesCompleted, 
-      startNewChallenge, 
-      activeChallenge, 
-      resetChallenge, 
-      experienceToNextLevel,
-      completeChallenge
-      }}>
+    <ChallengesContext.Provider
+      value={{
+        level,
+        levelUp,
+        currentExperience,
+        challengesCompleted,
+        startNewChallenge,
+        activeChallenge,
+        resetChallenge,
+        experienceToNextLevel,
+        completeChallenge,
+      }}
+    >
       {children}
     </ChallengesContext.Provider>
   );

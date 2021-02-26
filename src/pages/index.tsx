@@ -1,12 +1,11 @@
-import Head from 'next/head';
-import { CompletedChallenges } from '../components/CompletedChallenges';
-import { Countdown } from '../components/Countdown';
-import { ExperienceBar } from '../components/ExperienceBar';
-import { Profile } from '../components/Profile';
-import { ChallengeBox } from '../components/ChallengeBox';
-import styles from '../styles/pages/Home.module.css';
-import { CountdownProvider } from '../contexts/CountdownContext';
-
+import Head from "next/head";
+import { CompletedChallenges } from "../components/CompletedChallenges";
+import { Countdown } from "../components/Countdown";
+import { ExperienceBar } from "../components/ExperienceBar";
+import { Profile } from "../components/Profile";
+import { ChallengeBox } from "../components/ChallengeBox";
+import styles from "../styles/pages/Home.module.css";
+import { CountdownProvider } from "../contexts/CountdownContext";
 
 export default function Home() {
   return (
@@ -14,7 +13,6 @@ export default function Home() {
       <Head>
         <title>Inicio | MoveIt</title>
       </Head>
-
 
       <ExperienceBar />
 
@@ -31,6 +29,11 @@ export default function Home() {
           </div>
         </section>
       </CountdownProvider>
-    </div> 
-  )
+    </div>
+  );
 }
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
